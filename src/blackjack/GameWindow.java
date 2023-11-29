@@ -13,7 +13,7 @@ public class GameWindow extends JFrame implements IGUIupdater {
 	private final int WIDTH = 1000;
 	private final int HEIGHT = 800;
 
-	JPanel screen;
+	private JPanel screen;
 	
 	public GameWindow() {
 		setTitle("Blackjack Project");
@@ -54,7 +54,7 @@ public class GameWindow extends JFrame implements IGUIupdater {
 				gameStart();
 			}
 		});	
-		repaint();	
+		updateGUI();
 	}
 	
 	// 게임시작

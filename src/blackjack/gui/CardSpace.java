@@ -7,9 +7,9 @@ import java.util.Vector;
 import blackjack.Card;
 
 public class CardSpace extends JPanel {
-    Vector<Card> cards;
-    CardImages cardImages;
-    JLabel label;
+    private Vector<Card> cards;
+    private CardImages cardImages;
+    private JLabel label;
     
     public CardSpace(Vector<Card> cards, CardImages cardImages, String text, Color color) {
         super();

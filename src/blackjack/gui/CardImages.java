@@ -6,8 +6,8 @@ import blackjack.Card;
 
 public class CardImages {
     private Image[] images = new Image[Card.SIZE_OF_ONE_SUIT * 4 + 1];
-    private final int CARD_WIDTH = 100;
-    private final int CARD_HEIGHT = 144;
+    private static final int CARD_WIDTH = 100;
+    private static final int CARD_HEIGHT = 144;
 
     public CardImages() {
         for(int suit = 0; suit < 4; suit++) {

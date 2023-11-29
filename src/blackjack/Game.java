@@ -10,11 +10,11 @@ public class Game {
     private static final double RESULT_LOSE = 0;
     private static final double RESULT_TIE = 1;
 
-    Deck deck;
-    Dealer dealer;
-    UserPlayer userPlayer;
+    private Deck deck;
+    private Dealer dealer;
+    private UserPlayer userPlayer;
 
-    IGUIupdater gui;
+    private IGUIupdater gui;
 
     Game(IGUIupdater gui) {
         deck = new Deck();
