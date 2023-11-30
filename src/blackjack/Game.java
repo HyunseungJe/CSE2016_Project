@@ -16,7 +16,7 @@ public class Game {
 
     private IGUIupdater gui;
 
-    Game(IGUIupdater gui) {
+    public Game(IGUIupdater gui) {
         deck = new Deck();
         dealer = new Dealer();
         userPlayer = new UserPlayer(1000);
@@ -42,7 +42,7 @@ public class Game {
     public void userHit() {
         userPlayer.hit(deck.draw());
         int userSum = userPlayer.getHandSum();
-        if(userSum > 21) gameResult(RESULT_LOSE);
+        if(userSum > 21) gameResult(RESULT_LOSE, "You Busted. You Loseㅠㅠ");
         else if(userSum == 21) userStand();
     }
 
@@ -51,27 +51,32 @@ public class Game {
         int userSum = userPlayer.getHandSum();
         int dealerSum = dealer.getHandSum();
 
-        if(userSum == dealerSum) gameResult(RESULT_TIE);
-        else if(userSum == 21) gameResult(RESULT_BLACKJACK);
-        else if(dealerSum > 21) gameResult(RESULT_WIN);
-        else if(dealerSum == 21) gameResult(RESULT_LOSE);
-        else if(userSum > dealerSum) gameResult(RESULT_WIN);
-        else if(userSum < dealerSum) gameResult(RESULT_LOSE);
+        if(userSum == dealerSum) gameResult(RESULT_TIE, null);
+        else if(userSum == 21) gameResult(RESULT_BLACKJACK, null);
+        else if(dealerSum > 21) gameResult(RESULT_WIN, "Dealer Busted. You Win!!");
+        else if(dealerSum == 21) gameResult(RESULT_LOSE, "Dealer Blackjack. You Loseㅠㅠ");
+        else if(userSum > dealerSum) gameResult(RESULT_WIN, null);
+        else if(userSum < dealerSum) gameResult(RESULT_LOSE, null);
     }
 
-    public void gameResult(double multiplier) {
+    public void gameResult(double multiplier, String message) {
         gui.updateGUI();
+        String msg;
         if(multiplier == RESULT_WIN) {
-            JOptionPane.showConfirmDialog(null, "You Win!!", "Game Result", JOptionPane.OK_CANCEL_OPTION);
+            msg = message != null ? message : "You Win!!";
+        	JOptionPane.showConfirmDialog(null, msg, "Game Result", JOptionPane.OK_CANCEL_OPTION);
         }
         else if(multiplier == RESULT_LOSE) {
-            JOptionPane.showConfirmDialog(null, "You Loseㅠㅠ", "Game Result", JOptionPane.OK_CANCEL_OPTION);
+        	msg = message != null ? message : "You Loseㅠㅠ!!";
+            JOptionPane.showConfirmDialog(null, msg, "Game Result", JOptionPane.OK_CANCEL_OPTION);
         }
         else if(multiplier == RESULT_TIE) {
-            JOptionPane.showConfirmDialog(null, "Tie", "Game Result", JOptionPane.OK_CANCEL_OPTION);
+        	msg = message != null ? message : "Tie";
+            JOptionPane.showConfirmDialog(null, msg, "Game Result", JOptionPane.OK_CANCEL_OPTION);
         }
         else if(multiplier == RESULT_BLACKJACK) {
-            JOptionPane.showConfirmDialog(null, "Blackjack!!!!!", "Game Result", JOptionPane.OK_CANCEL_OPTION);
+        	msg = message != null ? message : "Blackjack!!!!!";
+            JOptionPane.showConfirmDialog(null, msg, "Game Result", JOptionPane.OK_CANCEL_OPTION);
         }
         else throw new RuntimeException("Invaild gameResult: " + multiplier);
 
