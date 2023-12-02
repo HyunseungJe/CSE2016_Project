@@ -3,6 +3,7 @@ package blackjack;
 import javax.swing.*;
 
 import blackjack.gui.*;
+import blackjack.gui.scenes.*;
 
 public class GameWindow extends JFrame {
 	private final int WIDTH = 1000;

@@ -1,4 +1,4 @@
-package blackjack.gui;
+package blackjack.gui.scenes;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,6 +17,9 @@ import javax.swing.event.DocumentListener;
 
 import blackjack.Game;
 import blackjack.GameSetting;
+import blackjack.gui.CardImages;
+import blackjack.gui.CardSpace;
+import blackjack.gui.Scene;
 
 public class GameScene extends Scene {
 	private GameSetting setting;

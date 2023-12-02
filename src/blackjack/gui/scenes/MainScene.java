@@ -1,4 +1,4 @@
-package blackjack.gui;
+package blackjack.gui.scenes;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+
+import blackjack.gui.Scene;
 
 public class MainScene extends Scene {
 	public MainScene() {

@@ -1,6 +1,9 @@
-package blackjack.gui;
+package blackjack.gui.scenes;
 
 import javax.swing.*;
+
+import blackjack.gui.Scene;
+
 import java.awt.*;
 
 import java.awt.event.*;
