@@ -1,5 +1,7 @@
 package blackjack.gui.scenes;
 
+import java.util.Vector;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -9,7 +11,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -17,6 +18,7 @@ import javax.swing.event.DocumentListener;
 
 import blackjack.Game;
 import blackjack.GameSetting;
+import blackjack.UserPlayer;
 import blackjack.gui.CardImages;
 import blackjack.gui.CardSpace;
 import blackjack.gui.Scene;
@@ -27,7 +29,10 @@ public class GameScene extends Scene {
 
 	private CardImages cardImages = new CardImages();
 	private CardSpace dealerCardSpace;
-	private CardSpace userCardSpace;
+	private Vector<CardSpace> userCardSpaces = new Vector<CardSpace>();
+	private JPanel cardSpace = new JPanel();
+
+	private static final Color COLOR_PLAYER_CARDSPACE = Color.GREEN;
 	
 	private JLabel betLabel;
 	private JLabel moneyLabel;
@@ -41,7 +46,7 @@ public class GameScene extends Scene {
 	public GameScene() {
 		
 		setLayout(new BorderLayout());
-		JPanel cardSpace = new JPanel();
+		cardSpace = new JPanel();
 		cardSpace.setBackground(Color.GRAY);
 		cardSpace.setLayout(new GridLayout(2, 1));
 
@@ -72,11 +77,12 @@ public class GameScene extends Scene {
 			public void update() {
 				int bet;
 				String str = betTextField.getText();
+				if(game.getPhase() != Game.PHASE_BET) return;
 				try {
 					bet = Integer.parseInt(str);
-					if(bet < game.getMinBet()) throw new RuntimeException();
-					else if(bet > game.getMaxBet()) throw new RuntimeException();
-					else if(bet > game.getUserPlayer().getMoney()) throw new RuntimeException();
+					if(bet < game.getGameSetting().getMinBet()) throw new RuntimeException();
+					else if(bet > game.getGameSetting().getMaxBet()) throw new RuntimeException();
+					else if(bet > game.getCurUserPlayer().getMoney()) throw new RuntimeException();
 					betButton.setEnabled(true);
 				} catch (Exception e) {
 					betButton.setEnabled(false);
@@ -91,7 +97,6 @@ public class GameScene extends Scene {
 		buttonPanel.add(betTextField);
 
 		dealerCardSpace = new CardSpace(cardImages, "딜러", Color.cyan);
-		userCardSpace = new CardSpace(cardImages, "플레이어", Color.orange);
 
 		betLabel = new JLabel();
 		betLabel.setBounds(60, 70, 100, 30);		
@@ -109,20 +114,20 @@ public class GameScene extends Scene {
 		betButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//game.init();
-				game.userBet(Integer.parseInt(betTextField.getText()));
-				
-				betLabel.setText("베팅 금액 : " + game.getUserPlayer().getBet());
-				moneyLabel.setText("현재 돈 : " + game.getUserPlayer().getMoney());
-				
-				hitButton.setEnabled(true);
-				standButton.setEnabled(true);
-				
-				betButton.setEnabled(false);
-				betTextField.setEnabled(false);
-				
-				game.afterBet();
-				buttonHitStand(); // Unless Initial Hand is Blackjack, Do nothing.
+				game.userBet(Integer.parseInt(betTextField.getText()));				
+
+				updateGUI();
+			
+				if(game.getPhase() == Game.PHASE_HIT_OR_STAND) {
+					hitButton.setEnabled(true);
+					standButton.setEnabled(true);
+					
+					betButton.setEnabled(false);
+					betTextField.setEnabled(false);
+					game.afterBet();
+
+					buttonHitStand(); // 시작하자마자 모두가 블랙잭인 경우를 고려
+				}
 			}
 		});
 
@@ -142,17 +147,17 @@ public class GameScene extends Scene {
 		});
 	
 		cardSpace.add(dealerCardSpace);
-		cardSpace.add(userCardSpace);
 		
 		hitButton.setEnabled(false);
 		standButton.setEnabled(false);
 	}
 	
 	private void buttonHitStand() {
-		if(game.getPhase() == Game.PHASE_GAME_RESULT) {
+		int phase = game.getPhase();
+		if(phase == Game.PHASE_HIT_OR_STAND) {
+		}
+		else if(phase == Game.PHASE_GAME_RESULT) {
 			game.init();
-			betLabel.setText("베팅 금액 : " + game.getUserPlayer().getBet());
-			moneyLabel.setText("현재 돈 : " + game.getUserPlayer().getMoney());
 			
 			hitButton.setEnabled(false);
 			standButton.setEnabled(false);
@@ -160,16 +165,20 @@ public class GameScene extends Scene {
 			betButton.setEnabled(true);
 			betTextField.setEnabled(true);
 			
-			if(Integer.parseInt(betTextField.getText()) > game.getUserPlayer().getMoney())
-				betTextField.setText(Integer.toString(game.getUserPlayer().getMoney()));
-			
-			updateGUI();
-			
-			if(game.getUserPlayer().getMoney() < game.getMinBet()) {
-				JOptionPane.showMessageDialog(null, "더 이상 베팅할 돈이 없습니다. 파산했습니다ㅋ");
-				System.exit(0);
+			for(UserPlayer player : game.getUserPlayers()) {
+				if(player.getState() == UserPlayer.STATE_MONEY_RUN_OUT) {
+					getUserCardSpaceByNum(player.getPlayerNum()).setBackground(Color.DARK_GRAY);
+				}
+				else {
+					getUserCardSpaceByNum(player.getPlayerNum()).setBackground(Color.GREEN);
+				}
 			}
 		}	
+		updateGUI();
+	}
+
+	private CardSpace getUserCardSpaceByNum(int num) {
+		return userCardSpaces.get(num);
 	}
 
 	public void receiveSettingVal(int playerNum) {
@@ -179,14 +188,49 @@ public class GameScene extends Scene {
 	@Override
 	public void sceneOccured() {
 		game = new Game(this, setting);
+		game.init();
 
-		betLabel.setText("베팅 금액 : " + game.getUserPlayer().getBet() + "$");
-		moneyLabel.setText("현재 돈 : " + game.getUserPlayer().getMoney() + "$");
-		toBetLabel.setText("베팅할 금액(" + game.getMinBet() + "$ ~ " + game.getMaxBet() + "$)");
+		toBetLabel.setText("베팅할 금액(" + game.getGameSetting().getMinBet() + "$ ~ " + game.getGameSetting().getMaxBet() + "$)");
 
 		dealerCardSpace.setDisplayCards(game.getDealer().getHand());
-		userCardSpace.setDisplayCards(game.getUserPlayer().getHand());
 
-		game.init();
+		JPanel userCardSpacePanel = new JPanel();
+		userCardSpacePanel.setLayout(new GridLayout(1, setting.getPlayerNum()));
+
+		for(int i = 0; i < setting.getPlayerNum(); i++) {
+			CardSpace ucs = new CardSpace(cardImages, "플레이어" + (i + 1), COLOR_PLAYER_CARDSPACE);
+			userCardSpaces.add(ucs);
+			userCardSpacePanel.add(ucs);
+			ucs.setDisplayCards(game.getUserPlayers()[i].getHand());
+		}
+		cardSpace.add(userCardSpacePanel);
+
+		updateGUI();
+	}
+
+	@Override
+	public void updateGUI() {
+		if(game != null) {
+			UserPlayer player = game.getCurUserPlayer();
+			betLabel.setText("베팅 금액 : " + player.getBet() + "$");
+			moneyLabel.setText("현재 돈 : " + player.getMoney() + "$");			
+
+			UserPlayer prevPlayer = game.getPrevUserPlayer();
+			if(prevPlayer.getState() == UserPlayer.STATE_BUSTED) {
+				getUserCardSpaceByNum(prevPlayer.getPlayerNum()).setBackground(Color.GRAY);
+			}
+			else if(prevPlayer.getState() == UserPlayer.STATE_STAND) {
+				getUserCardSpaceByNum(prevPlayer.getPlayerNum()).setBackground(Color.YELLOW);
+			}
+			else if(prevPlayer.getState() == UserPlayer.STATE_PLAYING) {
+				getUserCardSpaceByNum(prevPlayer.getPlayerNum()).setBackground(Color.GREEN);
+			}
+			getUserCardSpaceByNum(player.getPlayerNum()).setBackground(Color.WHITE);
+
+			betTextField.setText(Integer.toString(game.getCurUserPlayer().getPrevBet()));
+			if(Integer.parseInt(betTextField.getText()) > game.getCurUserPlayer().getMoney())
+				betTextField.setText(Integer.toString(game.getCurUserPlayer().getMoney()));
+		}
+		super.updateGUI();
 	}
 }

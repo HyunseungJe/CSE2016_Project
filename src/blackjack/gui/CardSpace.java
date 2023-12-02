@@ -27,7 +27,8 @@ public class CardSpace extends JPanel {
         if(cards == null) return;
         for(int i = 0; i < cards.size(); i++) {
             Card card = cards.get(i);
-            g.drawImage(cardImages.getImage(card.getSuit(), card.getRank()), 100 + i % 3 * 20 + i / 3 * 150, 30 + i % 3 * 20, this);
+            //g.drawImage(cardImages.getImage(card.getSuit(), card.getRank()), 100 + i % 3 * 20 + i / 3 * 150, 30 + i % 3 * 20, this);
+            g.drawImage(cardImages.getImage(card.getSuit(), card.getRank()), 100 + i * 20, 30 + i * 20, this);
         }
     }
 
