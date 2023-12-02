@@ -25,7 +25,7 @@ public class Game {
 
     private IGUIupdater gui;
 
-    public Game(IGUIupdater gui) {
+    public Game(IGUIupdater gui, GameSetting gameSetting) { // gameSetting 처리
     	minBet = 2;
     	maxBet = 500;
     	

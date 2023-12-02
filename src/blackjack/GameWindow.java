@@ -17,6 +17,7 @@ public class GameWindow extends JFrame {
 		
 		SceneManager sceneManager = new SceneManager(this);
 		sceneManager.add("Main", new MainScene());
+		sceneManager.add("GameSetting", new GameSettingScene());
 		sceneManager.add("Game", new GameScene());
 		sceneManager.change("Main");
 		

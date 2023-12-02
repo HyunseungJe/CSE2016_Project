@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 
 public class MainScene extends Scene {
 	public MainScene() {
-		setBounds(0, 0, WIDTH, HEIGHT);
+		//setBounds(0, 0, WIDTH, HEIGHT);
 		setLayout(null);
 		setBackground(Color.WHITE);
 		
@@ -24,7 +24,8 @@ public class MainScene extends Scene {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				changeScene("Game");
+				//changeScene("Game");
+				changeScene("GameSetting");
 			}
 		});
 		

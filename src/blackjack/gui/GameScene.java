@@ -16,9 +16,15 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import blackjack.Game;
+import blackjack.GameSetting;
 
 public class GameScene extends Scene {
+	private GameSetting setting;
 	private Game game;
+
+	private CardImages cardImages = new CardImages();
+	private CardSpace dealerCardSpace;
+	private CardSpace userCardSpace;
 	
 	private JLabel betLabel;
 	private JLabel moneyLabel;
@@ -81,22 +87,18 @@ public class GameScene extends Scene {
 		buttonPanel.add(betButton);
 		buttonPanel.add(betTextField);
 
-		// 게임
-		game = new Game(this);
+		dealerCardSpace = new CardSpace(cardImages, "딜러", Color.cyan);
+		userCardSpace = new CardSpace(cardImages, "플레이어", Color.orange);
 
-		CardImages cardImages = new CardImages();
-		CardSpace dealerCardSpace = new CardSpace(game.getDealer().getHand(), cardImages, "딜러", Color.cyan);
-		CardSpace userCardSpace = new CardSpace(game.getUserPlayer().getHand(), cardImages, "플레이어", Color.orange);
-
-		betLabel = new JLabel("베팅 금액 : " + game.getUserPlayer().getBet() + "$");
+		betLabel = new JLabel();
 		betLabel.setBounds(60, 70, 100, 30);		
 		buttonPanel.add(betLabel);
 
-		moneyLabel = new JLabel("현재 돈 : " + game.getUserPlayer().getMoney() + "$");
+		moneyLabel = new JLabel();
 		moneyLabel.setBounds(60, 30, 100, 50);
 		buttonPanel.add(moneyLabel);
 		
-		toBetLabel = new JLabel("베팅할 금액(" + game.getMinBet() + "$ ~ " + game.getMaxBet() + "$)");
+		toBetLabel = new JLabel();
 		toBetLabel.setBounds(200, 10, 200, 20);
 		buttonPanel.add(toBetLabel);
 		
@@ -167,8 +169,21 @@ public class GameScene extends Scene {
 		}	
 	}
 
+	public void receiveSettingVal(int playerNum) {
+		setting = new GameSetting(playerNum);
+	}
+
 	@Override
 	public void sceneOccured() {
+		game = new Game(this, setting);
+
+		betLabel.setText("베팅 금액 : " + game.getUserPlayer().getBet() + "$");
+		moneyLabel.setText("현재 돈 : " + game.getUserPlayer().getMoney() + "$");
+		toBetLabel.setText("베팅할 금액(" + game.getMinBet() + "$ ~ " + game.getMaxBet() + "$)");
+
+		dealerCardSpace.setDisplayCards(game.getDealer().getHand());
+		userCardSpace.setDisplayCards(game.getUserPlayer().getHand());
+
 		game.init();
 	}
 }

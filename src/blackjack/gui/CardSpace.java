@@ -11,11 +11,10 @@ public class CardSpace extends JPanel {
     private CardImages cardImages;
     private JLabel label;
     
-    public CardSpace(Vector<Card> cards, CardImages cardImages, String text, Color color) {
+    public CardSpace(CardImages cardImages, String text, Color color) {
         super();
         setBackground(color);
         setLayout(null);
-        this.cards = cards;
         this.cardImages = cardImages;
 
         label = new JLabel(text);
@@ -25,9 +24,12 @@ public class CardSpace extends JPanel {
 
     public void paint(Graphics g) {
         super.paint(g);
+        if(cards == null) return;
         for(int i = 0; i < cards.size(); i++) {
             Card card = cards.get(i);
             g.drawImage(cardImages.getImage(card.getSuit(), card.getRank()), 100 + i % 3 * 20 + i / 3 * 150, 30 + i % 3 * 20, this);
         }
     }
+
+    public void setDisplayCards(Vector<Card> cards) { this.cards = cards; }
 }
