@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -17,7 +18,19 @@ import javax.swing.event.DocumentListener;
 import blackjack.Game;
 
 public class GameScene extends Scene {
+	private Game game;
+	
+	private JLabel betLabel;
+	private JLabel moneyLabel;
+	private JLabel toBetLabel;
+	
+	private JButton hitButton;
+	private JButton standButton;
+	private JButton betButton;
+	private JTextField betTextField;
+	
 	public GameScene() {
+		
 		setLayout(new BorderLayout());
 		JPanel cardSpace = new JPanel();
 		cardSpace.setBackground(Color.GRAY);
@@ -31,18 +44,18 @@ public class GameScene extends Scene {
 		add(cardSpace, BorderLayout.CENTER);
 		add(buttonPanel, BorderLayout.SOUTH);
 
-		JButton hitButton = new JButton("Hit");
+		hitButton = new JButton("Hit");
 		hitButton.setBounds(500, 50, 80, 50);
 
-		JButton standButton = new JButton("Stand");
+		standButton = new JButton("Stand");
 		standButton.setBounds(650, 50, 80, 50);
 		
-		JButton betButton = new JButton("Bet");
-		betButton.setBounds(150, 75, 80, 20);
+		betButton = new JButton("Bet");
+		betButton.setBounds(200, 75, 120, 40);
 		
-		JTextField betTextField = new JTextField();
+		betTextField = new JTextField();
 		betTextField.setText("100");
-		betTextField.setBounds(150, 50, 80, 20);
+		betTextField.setBounds(200, 40, 120, 20);
 		betTextField.getDocument().addDocumentListener(new DocumentListener() {
 			@Override public void insertUpdate(DocumentEvent e) { update(); }
 			@Override public void removeUpdate(DocumentEvent e) { update(); }
@@ -52,7 +65,9 @@ public class GameScene extends Scene {
 				String str = betTextField.getText();
 				try {
 					bet = Integer.parseInt(str);
-					if(bet <= 0) throw new RuntimeException("Betting Money cannot be less or equal than 0");
+					if(bet < game.getMinBet()) throw new RuntimeException();
+					else if(bet > game.getMaxBet()) throw new RuntimeException();
+					else if(bet > game.getUserPlayer().getMoney()) throw new RuntimeException();
 					betButton.setEnabled(true);
 				} catch (Exception e) {
 					betButton.setEnabled(false);
@@ -67,43 +82,93 @@ public class GameScene extends Scene {
 		buttonPanel.add(betTextField);
 
 		// 게임
-		Game game = new Game(this);
+		game = new Game(this);
 
 		CardImages cardImages = new CardImages();
 		CardSpace dealerCardSpace = new CardSpace(game.getDealer().getHand(), cardImages, "딜러", Color.cyan);
 		CardSpace userCardSpace = new CardSpace(game.getUserPlayer().getHand(), cardImages, "플레이어", Color.orange);
 
-		JLabel betLabel = new JLabel("베팅 금액 : " + game.getUserPlayer().getBet());
-		betLabel.setBounds(50, 30, 100, 50);		
+		betLabel = new JLabel("베팅 금액 : " + game.getUserPlayer().getBet() + "$");
+		betLabel.setBounds(60, 70, 100, 30);		
 		buttonPanel.add(betLabel);
 
-		JLabel moneyLabel = new JLabel("현재 돈 : " + game.getUserPlayer().getMoney());
-		moneyLabel.setBounds(50, 70, 100, 50);
+		moneyLabel = new JLabel("현재 돈 : " + game.getUserPlayer().getMoney() + "$");
+		moneyLabel.setBounds(60, 30, 100, 50);
 		buttonPanel.add(moneyLabel);
+		
+		toBetLabel = new JLabel("베팅할 금액(" + game.getMinBet() + "$ ~ " + game.getMaxBet() + "$)");
+		toBetLabel.setBounds(200, 10, 200, 20);
+		buttonPanel.add(toBetLabel);
+		
+		
+		betButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//game.init();
+				game.userBet(Integer.parseInt(betTextField.getText()));
+				
+				betLabel.setText("베팅 금액 : " + game.getUserPlayer().getBet());
+				moneyLabel.setText("현재 돈 : " + game.getUserPlayer().getMoney());
+				
+				hitButton.setEnabled(true);
+				standButton.setEnabled(true);
+				
+				betButton.setEnabled(false);
+				betTextField.setEnabled(false);
+				
+				game.afterBet();
+				buttonHitStand(); // Unless Initial Hand is Blackjack, Do nothing.
+			}
+		});
 
 		hitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				game.userHit();		
-				
-				betLabel.setText("베팅 금액 : " + game.getUserPlayer().getBet());
-				moneyLabel.setText("현재 돈 : " + game.getUserPlayer().getMoney());
-				updateGUI();
+				buttonHitStand();
 			}
 		});
 		standButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				game.userStand();
-
-				betLabel.setText("베팅 금액 : " + game.getUserPlayer().getBet());
-				moneyLabel.setText("현재 돈 : " + game.getUserPlayer().getMoney());
-				updateGUI();
+				buttonHitStand();
 			}
 		});
 	
 		cardSpace.add(dealerCardSpace);
 		cardSpace.add(userCardSpace);
+		
+		hitButton.setEnabled(false);
+		standButton.setEnabled(false);
+	}
+	
+	private void buttonHitStand() {
+		if(game.getPhase() == Game.PHASE_GAME_RESULT) {
+			game.init();
+			betLabel.setText("베팅 금액 : " + game.getUserPlayer().getBet());
+			moneyLabel.setText("현재 돈 : " + game.getUserPlayer().getMoney());
+			
+			hitButton.setEnabled(false);
+			standButton.setEnabled(false);
+			
+			betButton.setEnabled(true);
+			betTextField.setEnabled(true);
+			
+			if(Integer.parseInt(betTextField.getText()) > game.getUserPlayer().getMoney())
+				betTextField.setText(Integer.toString(game.getUserPlayer().getMoney()));
+			
+			updateGUI();
+			
+			if(game.getUserPlayer().getMoney() < game.getMinBet()) {
+				JOptionPane.showMessageDialog(null, "더 이상 베팅할 돈이 없습니다. 파산했습니다ㅋ");
+				System.exit(0);
+			}
+		}	
 	}
 
+	@Override
+	public void sceneOccured() {
+		game.init();
+	}
 }

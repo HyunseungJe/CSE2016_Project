@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.awt.*;
 
 public class SceneManager implements ISceneChanger {
-	private HashMap<String, Scene> Scenes = new HashMap<String, Scene>(); // Map 자료구조로 바꿀 예정
+	private HashMap<String, Scene> Scenes = new HashMap<String, Scene>();
 	private Container screen;
 	private String curScene = null;
 	
