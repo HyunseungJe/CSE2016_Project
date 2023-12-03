@@ -226,7 +226,7 @@ public class GameScene extends Scene {
 
 			UserPlayer prevPlayer = game.getPrevUserPlayer();
 			getUserCardSpaceByNum(prevPlayer.getPlayerNum()).setBackgroundByUserState(prevPlayer.getState());
-			getUserCardSpaceByNum(player.getPlayerNum()).setBackground(Color.WHITE);
+			if(game.getPhase() != Game.PHASE_GAME_RESULT) getUserCardSpaceByNum(player.getPlayerNum()).setBackground(Color.WHITE);
 
 			betTextField.setText(Integer.toString(game.getCurUserPlayer().getPrevBet()));
 			if(Integer.parseInt(betTextField.getText()) > game.getCurUserPlayer().getMoney())

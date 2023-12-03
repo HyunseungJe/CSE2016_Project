@@ -9,7 +9,9 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class GameSettingScene extends Scene {
-    JLabel playerNumLabel;
+    private static final int MAX_PLAYER = 4;
+
+    private JLabel playerNumLabel;
     public GameSettingScene() {
         setLayout(null);
 
@@ -21,7 +23,7 @@ public class GameSettingScene extends Scene {
         //pnPanel.setBorder(new Border());
         pnPanel.setBackground(Color.white);
         pnPanel.setBounds(80, 100, 200, 80);
-        JLabel pnLabel = new JLabel("플레이어 수(1 ~ 8)");
+        JLabel pnLabel = new JLabel("플레이어 수(1 ~ " + MAX_PLAYER + ")");
         pnLabel.setBounds(50, 10, 100, 30);
         
         playerNumLabel = new JLabel();
@@ -46,7 +48,7 @@ public class GameSettingScene extends Scene {
                 if(n == 1) {
                     pnMinusButton.setEnabled(true);
                 }
-                else if(n + 1 >= 8) pnPlusButton.setEnabled(false);
+                else if(n + 1 >= MAX_PLAYER) pnPlusButton.setEnabled(false);
                 playerNumLabel.setText(Integer.toString(n + 1));
             }
         });
@@ -55,7 +57,7 @@ public class GameSettingScene extends Scene {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int n = Integer.parseInt(playerNumLabel.getText());
-                if(n == 8) {
+                if(n == MAX_PLAYER) {
                     pnPlusButton.setEnabled(true);
                 }
                 else if(n - 1 <= 1) pnMinusButton.setEnabled(false);
