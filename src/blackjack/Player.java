@@ -2,7 +2,7 @@ package blackjack;
 
 import java.util.Vector;
 
-public class Player {
+public abstract class Player {
     protected Vector<Card> hand;
 
     protected Player() {

@@ -44,10 +44,20 @@ public class Game {
         phase = PHASE_BET;
 
     }
+
+    public void userBet(int betMoney) {
+    	getCurUserPlayer().betMoney(betMoney);
+        nextTurn();
+        if(playerTurn == 0) {
+            phase = PHASE_HIT_OR_STAND;
+            if(getCurUserPlayer().getHandSum() == 21) userStand();
+        }
+    }
     
     public void afterBet() {
         dealer.hit(deck.draw());
         for(UserPlayer player : userPlayers) {
+            if(player.getState() == UserPlayer.STATE_BUSTED) continue;
             player.hit(deck.draw());
             player.hit(deck.draw());
             if(player.getHandSum() == 21) {
@@ -80,16 +90,7 @@ public class Game {
             if(isGameDone()) gameResult();
     	}
     }
-    
-    public void userBet(int betMoney) {
-    	getCurUserPlayer().betMoney(betMoney);
-        nextTurn();
-        if(playerTurn == 0) {
-            phase = PHASE_HIT_OR_STAND;
-            if(getCurUserPlayer().getHandSum() == 21) userStand();
-        }
-    }
-    
+     
     public boolean isGameDone() {
         boolean bPlayingExist = false;
         for(UserPlayer player : userPlayers) {

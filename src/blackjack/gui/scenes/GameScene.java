@@ -22,6 +22,7 @@ import blackjack.UserPlayer;
 import blackjack.gui.CardImages;
 import blackjack.gui.CardSpace;
 import blackjack.gui.Scene;
+import blackjack.gui.UserCardSpace;
 
 public class GameScene extends Scene {
 	private GameSetting setting;
@@ -29,7 +30,7 @@ public class GameScene extends Scene {
 
 	private CardImages cardImages = new CardImages();
 	private CardSpace dealerCardSpace;
-	private Vector<CardSpace> userCardSpaces = new Vector<CardSpace>();
+	private Vector<UserCardSpace> userCardSpaces = new Vector<UserCardSpace>();
 	private JPanel cardSpace = new JPanel();
 
 	private static final Color COLOR_PLAYER_CARDSPACE = Color.GREEN;
@@ -115,9 +116,7 @@ public class GameScene extends Scene {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				game.userBet(Integer.parseInt(betTextField.getText()));				
-
-				updateGUI();
-			
+	
 				if(game.getPhase() == Game.PHASE_HIT_OR_STAND) {
 					hitButton.setEnabled(true);
 					standButton.setEnabled(true);
@@ -126,8 +125,13 @@ public class GameScene extends Scene {
 					betTextField.setEnabled(false);
 					game.afterBet();
 
+					for(UserPlayer player : game.getUserPlayers()) {
+						getUserCardSpaceByNum(player.getPlayerNum()).setBackgroundByUserState(player.getState());
+					}
+
 					buttonHitStand(); // 시작하자마자 모두가 블랙잭인 경우를 고려
 				}
+				updateGUI();
 			}
 		});
 
@@ -163,23 +167,18 @@ public class GameScene extends Scene {
 			standButton.setEnabled(false);
 			
 			betButton.setEnabled(true);
-			betTextField.setEnabled(true);
-			
+			betTextField.setEnabled(true);	
+
 			for(UserPlayer player : game.getUserPlayers()) {
-				if(player.getState() == UserPlayer.STATE_MONEY_RUN_OUT) {
-					getUserCardSpaceByNum(player.getPlayerNum()).setBackground(Color.DARK_GRAY);
-				}
-				else {
-					getUserCardSpaceByNum(player.getPlayerNum()).setBackground(Color.GREEN);
-				}
+				getUserCardSpaceByNum(player.getPlayerNum()).setBackgroundByUserState(player.getState());
 			}
 		}	
 		updateGUI();
 	}
 
-	private CardSpace getUserCardSpaceByNum(int num) {
+	private UserCardSpace getUserCardSpaceByNum(int num) {
 		return userCardSpaces.get(num);
-	}
+	}	
 
 	public void receiveSettingVal(int playerNum) {
 		setting = new GameSetting(playerNum);
@@ -198,7 +197,7 @@ public class GameScene extends Scene {
 		userCardSpacePanel.setLayout(new GridLayout(1, setting.getPlayerNum()));
 
 		for(int i = 0; i < setting.getPlayerNum(); i++) {
-			CardSpace ucs = new CardSpace(cardImages, "플레이어" + (i + 1), COLOR_PLAYER_CARDSPACE);
+			UserCardSpace ucs = new UserCardSpace(cardImages, "플레이어" + (i + 1), COLOR_PLAYER_CARDSPACE);
 			userCardSpaces.add(ucs);
 			userCardSpacePanel.add(ucs);
 			ucs.setDisplayCards(game.getUserPlayers()[i].getHand());
@@ -215,16 +214,12 @@ public class GameScene extends Scene {
 			betLabel.setText("베팅 금액 : " + player.getBet() + "$");
 			moneyLabel.setText("현재 돈 : " + player.getMoney() + "$");			
 
+			for(UserPlayer pl : game.getUserPlayers()) {
+				getUserCardSpaceByNum(pl.getPlayerNum()).updateLabel(pl.getMoney(), pl.getBet(), pl.getState());
+			}
+
 			UserPlayer prevPlayer = game.getPrevUserPlayer();
-			if(prevPlayer.getState() == UserPlayer.STATE_BUSTED) {
-				getUserCardSpaceByNum(prevPlayer.getPlayerNum()).setBackground(Color.GRAY);
-			}
-			else if(prevPlayer.getState() == UserPlayer.STATE_STAND) {
-				getUserCardSpaceByNum(prevPlayer.getPlayerNum()).setBackground(Color.YELLOW);
-			}
-			else if(prevPlayer.getState() == UserPlayer.STATE_PLAYING) {
-				getUserCardSpaceByNum(prevPlayer.getPlayerNum()).setBackground(Color.GREEN);
-			}
+			getUserCardSpaceByNum(prevPlayer.getPlayerNum()).setBackgroundByUserState(prevPlayer.getState());
 			getUserCardSpaceByNum(player.getPlayerNum()).setBackground(Color.WHITE);
 
 			betTextField.setText(Integer.toString(game.getCurUserPlayer().getPrevBet()));
