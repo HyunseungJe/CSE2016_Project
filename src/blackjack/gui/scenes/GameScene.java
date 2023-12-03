@@ -38,6 +38,7 @@ public class GameScene extends Scene {
 	private JLabel betLabel;
 	private JLabel moneyLabel;
 	private JLabel toBetLabel;
+	private JLabel playerTurnLabel;
 	
 	private JButton hitButton;
 	private JButton standButton;
@@ -100,16 +101,20 @@ public class GameScene extends Scene {
 		dealerCardSpace = new CardSpace(cardImages, "딜러", Color.cyan);
 
 		betLabel = new JLabel();
-		betLabel.setBounds(60, 70, 100, 30);		
+		betLabel.setBounds(30, 70, 100, 30);		
 		buttonPanel.add(betLabel);
 
 		moneyLabel = new JLabel();
-		moneyLabel.setBounds(60, 30, 100, 50);
+		moneyLabel.setBounds(30, 30, 100, 50);
 		buttonPanel.add(moneyLabel);
 		
 		toBetLabel = new JLabel();
 		toBetLabel.setBounds(200, 10, 200, 20);
 		buttonPanel.add(toBetLabel);
+
+		playerTurnLabel = new JLabel();
+		playerTurnLabel.setBounds(30, 10, 120, 30);
+		buttonPanel.add(playerTurnLabel);
 		
 		
 		betButton.addActionListener(new ActionListener() {
@@ -213,6 +218,7 @@ public class GameScene extends Scene {
 			UserPlayer player = game.getCurUserPlayer();
 			betLabel.setText("베팅 금액 : " + player.getBet() + "$");
 			moneyLabel.setText("현재 돈 : " + player.getMoney() + "$");			
+			playerTurnLabel.setText("현재 턴 : " + "플레이어" + (player.getPlayerNum() + 1));
 
 			for(UserPlayer pl : game.getUserPlayers()) {
 				getUserCardSpaceByNum(pl.getPlayerNum()).updateLabel(pl.getMoney(), pl.getBet(), pl.getState());

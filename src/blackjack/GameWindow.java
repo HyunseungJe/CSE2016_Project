@@ -6,7 +6,7 @@ import blackjack.gui.*;
 import blackjack.gui.scenes.*;
 
 public class GameWindow extends JFrame {
-	private final int WIDTH = 1000;
+	private final int WIDTH = 1200;
 	private final int HEIGHT = 800;
 	
 	public GameWindow() {
