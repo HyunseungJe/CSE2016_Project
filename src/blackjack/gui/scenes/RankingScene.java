@@ -54,7 +54,7 @@ public class RankingScene extends Scene implements ActionListener {
 				row[2] = Integer.toString(data[i].getGameCnt());
 				row[3] = Integer.toString(data[i].getGameWinCnt());
 				row[4] = Integer.toString(data[i].getGameDrawCnt());
-				row[5] = String.format("%.2f",(double)data[i].getGameWinCnt() / data[i].getGameCnt());
+				row[5] = String.format("%.2f",(double)(data[i].getGameWinCnt() + data[i].getGameBlackjackCnt()) / data[i].getGameCnt());
 				row[6] = Integer.toString(data[i].getGameBlackjackCnt());
 				for(int j = 0; j < HEADER.length; j++) {
 					contents[i][j] = row[j];
