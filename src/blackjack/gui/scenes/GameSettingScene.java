@@ -4,7 +4,6 @@ import javax.swing.*;
 
 import blackjack.gui.PlayerIdComponent;
 import blackjack.gui.Scene;
-import blackjack.gui.IGUIupdater;
 
 import java.awt.*;
 
@@ -12,12 +11,10 @@ import java.awt.event.*;
 
 public class GameSettingScene extends Scene implements ActionListener {
     private static final int MAX_PLAYER = 4;
-    private static final int MAX_ID_CHARACTER = 15;
+    private static final int MAX_ID_CHARACTER = 20;
     
     private int playerNum = 1;
-
-    private JLabel playerNumLabel;
-    
+ 
     private JScrollPane scrollPane;
     private JPanel playerIdPanel;
     private JButton addPlayerButton;
@@ -95,7 +92,7 @@ public class GameSettingScene extends Scene implements ActionListener {
     			JOptionPane.showMessageDialog(null, "아이디에는 알파벳 또는 숫자만이 포함될 수 있습니다");
     			return;
     		}
-    		else if(id.length() > 20) {
+    		else if(id.length() > MAX_ID_CHARACTER) {
     			JOptionPane.showMessageDialog(null, "아이디는 20자 이하여야 합니다");
     			return;
     		}

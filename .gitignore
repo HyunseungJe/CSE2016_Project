@@ -3,6 +3,7 @@ bin
 .classpath
 .project
 .vscode
+userdata.csv
 
 blackjack++
 blackjack++.zip

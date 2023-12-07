@@ -59,11 +59,9 @@ public class RankingScene extends Scene implements ActionListener {
 				for(int j = 0; j < HEADER.length; j++) {
 					contents[i][j] = row[j];
 				}
-				System.out.println();
-			}
-			
+			}	
 		} catch (FileNotFoundException e) {
-			
+			contents = null;	
 		}
 		
 		rankingTable = new JTable(contents, HEADER);

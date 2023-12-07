@@ -21,7 +21,6 @@ public class UserPlayer extends Player {
         this.id = id;
         this.money = money;
         this.userNum = userNum;
-        // userData 처리
     }
 
     public void betMoney(int bet) {

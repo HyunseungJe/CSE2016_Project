@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -75,7 +74,7 @@ public class GameScene extends Scene implements ActionListener, DocumentListener
 		betButton = new JButton("Bet");
 		betButton.setBounds(200, 75, 120, 40);
 
-		goMainButton = new JButton("Finish Game");
+		goMainButton = new JButton("메인 화면");
 		goMainButton.setBounds(930, 20, 150, 60);
 		
 		betTextField = new JTextField();
