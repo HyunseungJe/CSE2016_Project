@@ -7,6 +7,8 @@ public class UserPlayer extends Player {
     private int lastGameResult = -1;
     private int userNum;
 
+    private String id;
+    
     public static final int STATE_PLAYING = 0;
     public static final int STATE_STAND = 1;
     public static final int STATE_BUSTED = 2;
@@ -14,10 +16,12 @@ public class UserPlayer extends Player {
 
     private int state = STATE_PLAYING;
 
-    public UserPlayer(int money, int userNum) {
+    public UserPlayer(int money, int userNum, String id) {
         super();
+        this.id = id;
         this.money = money;
         this.userNum = userNum;
+        // userData 처리
     }
 
     public void betMoney(int bet) {
@@ -57,4 +61,5 @@ public class UserPlayer extends Player {
     public int getState() { return state; }
     public int getLastGameResult() { return lastGameResult; }
     public int getPlayerNum() { return userNum; }
+    public String getId() { return id; }
 }

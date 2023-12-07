@@ -2,6 +2,8 @@ package blackjack.gui;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
+
+import blackjack.App;
 import blackjack.Card;
 
 public class CardImages {
@@ -12,7 +14,7 @@ public class CardImages {
     public CardImages() {
         for(int suit = 0; suit < 4; suit++) {
             for(int rank = 1; rank <= Card.SIZE_OF_ONE_SUIT; rank++) {
-                images[suit * Card.SIZE_OF_ONE_SUIT + rank] = new ImageIcon("src\\images\\" + getCardName(suit, rank) + ".png").getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+                images[suit * Card.SIZE_OF_ONE_SUIT + rank] = new ImageIcon(App.class.getResource("..\\images\\" + getCardName(suit, rank) + ".png")).getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
             }
         }
     }

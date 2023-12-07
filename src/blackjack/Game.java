@@ -1,5 +1,8 @@
 package blackjack;
 
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+
 import javax.swing.*;
 
 import blackjack.gui.IGUIupdater;
@@ -22,6 +25,8 @@ public class Game {
     private Dealer dealer;
     private UserPlayer[] userPlayers;
     private GameSetting gameSetting;
+    
+    private HashMap<String, UserData> userData;
 
     private IGUIupdater gui;
 
@@ -29,11 +34,34 @@ public class Game {
         this.gameSetting = gameSetting;
         this.gui = gui;
     	
+		// 플레이어 정보 읽어오기
+		try {
+			UserDataFileReader dataReader = new UserDataFileReader();
+			userData = dataReader.read();
+		} catch (FileNotFoundException e) {
+			userData = new HashMap<String, UserData>();
+		}
+        
         deck = new Deck();
         dealer = new Dealer();
 
         userPlayers = new UserPlayer[gameSetting.getPlayerNum()];
-        for(int i = 0; i < gameSetting.getPlayerNum(); i++) userPlayers[i] = new UserPlayer(1000, i);
+        for(int i = 0; i < gameSetting.getPlayerNum(); i++) {
+        	int money = 1000;
+        	String id = gameSetting.getPlayerIds()[i];
+        	if(!id.equals("Anonymous")) {
+        		UserData data = userData.get(id);
+            	if(data == null) {
+            		data = new UserData(id, money, 0, 0, 0, 0, 0);
+            		userData.put(id, data);
+            	}
+            	else money = data.getMoney();
+            	if(money < gameSetting.getMinBet()) {
+            		throw new RuntimeException("Wrong User Data read");
+            	}
+        	}
+        	userPlayers[i] = new UserPlayer(money, i, id);
+        }
     }
 
     public void init() {
@@ -43,11 +71,7 @@ public class Game {
         }
 
         playerTurn = 0;
-        if(isAllBankrupt()) {
-            JOptionPane.showMessageDialog(null, "모두가 파산했습니다..");
-            System.exit(0);
-        }
-        else if(getCurUserPlayer().getState() != UserPlayer.STATE_PLAYING) nextTurn();
+        if(getCurUserPlayer().getState() != UserPlayer.STATE_PLAYING) nextTurn();
 
         phase = PHASE_BET;
     }
@@ -131,44 +155,56 @@ public class Game {
         String resultMsg = "";
 
         for(UserPlayer player : userPlayers) {
-            if(player.getState() == UserPlayer.STATE_MONEY_RUN_OUT) continue;
+            if(player.getState() == UserPlayer.STATE_MONEY_RUN_OUT) {
+            	continue;
+            }
             int userSum = player.getHandSum();
+            int gameResult;
 
             String resultStr;
 
             if(userSum > 21) {
-                player.calcResult(RESULT_LOSE); // Player Bust
+                gameResult = RESULT_LOSE;
                 resultStr = "LOSE(Player Busted)";
             }
             else if(userSum == 21) {
                 if(dealerSum == 21) {
-                    player.calcResult(RESULT_TIE); // Both Blackjack
+                    gameResult = RESULT_TIE;
                     resultStr = "TIE(Player and Dealer Blackjack)";
                 }
                 else {
-                    player.calcResult(RESULT_BLACKJACK); // Player Blackjack
+                    gameResult = RESULT_BLACKJACK;
                     resultStr = "WIN(Player Blackjack)";
                 }
             }
             else if(dealerSum > 21) {
-                player.calcResult(RESULT_WIN); // Dealer Bust
+                gameResult = RESULT_WIN;
                 resultStr = "WIN(Dealer Busted)";
             }
             else if(userSum > dealerSum) {
-                player.calcResult(RESULT_WIN);
+            	gameResult = RESULT_WIN;
                 resultStr = "WIN";
             }
             else if(userSum < dealerSum) {
-                player.calcResult(RESULT_LOSE);
+            	gameResult = RESULT_LOSE;
                 resultStr = "LOSE";
             }
             else if(userSum == dealerSum) {
-                player.calcResult(RESULT_TIE);
+            	gameResult = RESULT_TIE;
                 resultStr = "TIE";
             }
             else throw new RuntimeException("Unexpected Game Result Case");
-
-            if(player.getMoney() < gameSetting.getMinBet()) player.runOutMoney(); // run out gui
+            player.calcResult(gameResult);
+            UserData data = userData.get(player.getId());
+            if(data != null) {
+            	data.setMoney(player.getMoney());
+            	data.calcGameResult(gameResult);
+            }
+            
+            if(player.getMoney() < gameSetting.getMinBet()) {
+            	player.runOutMoney(); // run out gui
+            	userData.remove(player.getId());
+            }
 
             resultMsg += "플레이어" + (player.getPlayerNum() + 1) + ": " + resultStr + "\n";
         }
@@ -178,6 +214,14 @@ public class Game {
         JOptionPane.showMessageDialog(null, resultMsg);
 
         //prevPlayerTurn = 0;
+    }
+    
+    public void saveUserData() {
+    	UserDataFileWriter dataWriter = new UserDataFileWriter();
+    	for(UserData vals : userData.values()) {
+    		dataWriter.writeUserData(vals);
+    	}
+    	dataWriter.saveCSV();
     }
 
     public void nextTurn() {

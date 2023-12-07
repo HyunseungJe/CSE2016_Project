@@ -12,16 +12,23 @@ public class UserCardSpace extends CardSpace {
     private JLabel money;
     private JLabel bet;
     private JLabel state;
+    
+    private JLabel idLabel;
 
-    public UserCardSpace(CardImages cardImages, String text, Color color) {
+    public UserCardSpace(CardImages cardImages, String text, Color color, String id) {
         super(cardImages, text, color);
 
+        idLabel = new JLabel();
+        idLabel.setBounds(20, 40, 150, 50);
+        idLabel.setText("(" + id + ")");
+        this.add(idLabel);
+        
         money = new JLabel();
-        money.setBounds(20, 40, 70, 50);
+        money.setBounds(20, 70, 70, 50);
         this.add(money);
 
         bet = new JLabel();
-        bet.setBounds(20, 70, 150, 50);
+        bet.setBounds(20, 100, 150, 50);
         this.add(bet);
          
         state = new JLabel();

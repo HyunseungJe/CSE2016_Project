@@ -25,7 +25,7 @@ public class CardSpace extends JPanel {
 
     public void paint(Graphics g) {
         super.paint(g);
-        if(cards == null) return;
+        if(cards == null) return; // If cards == null, draw empty space
         for(int i = 0; i < cards.size(); i++) {
             Card card = cards.get(i);
             //g.drawImage(cardImages.getImage(card.getSuit(), card.getRank()), 100 + i % 3 * 20 + i / 3 * 150, 30 + i % 3 * 20, this);
