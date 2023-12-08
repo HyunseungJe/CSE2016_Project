@@ -148,8 +148,8 @@ public class GameScene extends Scene implements ActionListener, DocumentListener
 		return userCardSpaces.get(num);
 	}	
 
-	public void receiveSettingVal(int playerNum, String[] playerIds) {
-		setting = new GameSetting(playerNum, playerIds);
+	public void receiveGameSetting(GameSetting setting) {
+		this.setting = setting;
 	}
 
 	@Override

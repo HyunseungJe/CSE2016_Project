@@ -2,6 +2,7 @@ package blackjack.gui.scenes;
 
 import javax.swing.*;
 
+import blackjack.GameSetting;
 import blackjack.gui.PlayerIdComponent;
 import blackjack.gui.Scene;
 
@@ -121,7 +122,7 @@ public class GameSettingScene extends Scene implements ActionListener {
             		i++;
             	}
             }
-            ((GameScene)getScene("Game")).receiveSettingVal(playerNum, playerIds);
+            ((GameScene)getScene("Game")).receiveGameSetting(new GameSetting(playerNum, playerIds));
 			changeScene("Game");
     	}
     	else if(source == backButton) {
