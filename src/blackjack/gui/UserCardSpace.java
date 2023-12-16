@@ -55,7 +55,7 @@ public class UserCardSpace extends CardSpace {
             setBackground(Color.YELLOW);
         }
         else if(state == UserPlayer.STATE_PLAYING) {
-            setBackground(Color.GREEN);
+            setBackground(this.color);
         }
         else if(state == UserPlayer.STATE_MONEY_RUN_OUT) {
             setBackground(Color.DARK_GRAY);

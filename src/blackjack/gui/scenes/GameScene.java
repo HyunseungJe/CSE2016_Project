@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import blackjack.App;
 import blackjack.Game;
 import blackjack.GameSetting;
 import blackjack.UserPlayer;
@@ -28,13 +30,12 @@ import blackjack.gui.UserCardSpace;
 public class GameScene extends Scene implements ActionListener, DocumentListener {
 	private GameSetting setting;
 	private Game game;
+	private static final Color DEEP_GREEN = new Color(0, 124, 0);
 
 	private CardImages cardImages = new CardImages();
 	private CardSpace dealerCardSpace;
 	private Vector<UserCardSpace> userCardSpaces = new Vector<UserCardSpace>();
 	private JPanel cardSpace = new JPanel();
-
-	private static final Color COLOR_PLAYER_CARDSPACE = Color.GREEN;
 	
 	private JLabel betLabel;
 	private JLabel moneyLabel;
@@ -89,7 +90,7 @@ public class GameScene extends Scene implements ActionListener, DocumentListener
 		buttonPanel.add(betButton);
 		buttonPanel.add(betTextField);
 
-		dealerCardSpace = new CardSpace(cardImages, "딜러", Color.cyan);
+		dealerCardSpace = new CardSpace(cardImages, "딜러", DEEP_GREEN);
 
 		betLabel = new JLabel();
 		betLabel.setBounds(30, 70, 100, 30);		
@@ -117,6 +118,7 @@ public class GameScene extends Scene implements ActionListener, DocumentListener
 		
 		hitButton.setEnabled(false);
 		standButton.setEnabled(false);
+		
 	}
 	
 	private void buttonHitStand() {
@@ -165,7 +167,7 @@ public class GameScene extends Scene implements ActionListener, DocumentListener
 		userCardSpacePanel.setLayout(new GridLayout(1, setting.getPlayerNum()));
 
 		for(int i = 0; i < setting.getPlayerNum(); i++) {
-			UserCardSpace ucs = new UserCardSpace(cardImages, "플레이어" + (i + 1), COLOR_PLAYER_CARDSPACE, game.getUserPlayers()[i].getId());
+			UserCardSpace ucs = new UserCardSpace(cardImages, "플레이어" + (i + 1), DEEP_GREEN, game.getUserPlayers()[i].getId());
 			userCardSpaces.add(ucs);
 			userCardSpacePanel.add(ucs);
 			ucs.setDisplayCards(game.getUserPlayers()[i].getHand());

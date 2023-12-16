@@ -10,9 +10,11 @@ public class CardSpace extends JPanel {
     private Vector<Card> cards;
     private CardImages cardImages;
     private JLabel label;
+    protected Color color;
  
     public CardSpace(CardImages cardImages, String text, Color color) {
         super();
+        this.color = color;
         setBackground(color);
         setLayout(null);
         this.cardImages = cardImages;
