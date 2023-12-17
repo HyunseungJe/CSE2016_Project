@@ -3,13 +3,11 @@ package blackjack;
 import java.io.*;
 
 public class UserDataFileWriter {
-    private static final String FILE_PATH = "userdata.csv";
-
     private BufferedWriter outfile;
 
     public UserDataFileWriter() {
         try {
-            outfile = new BufferedWriter(new FileWriter(FILE_PATH));
+            outfile = new BufferedWriter(new FileWriter(UserData.FILE_PATH));
         } catch (IOException e) {
             System.out.println("UserDataFileWriter Error: " + e.getMessage());
         }
