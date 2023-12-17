@@ -49,7 +49,7 @@ public class UserPlayer extends Player {
 
     @Override
     public void clear() {
-        super.clear();
+        hand.clear();
         if(state != STATE_MONEY_RUN_OUT) state = STATE_PLAYING;
     }
 

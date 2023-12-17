@@ -33,5 +33,5 @@ public abstract class Player {
     }
 
     public Vector<Card> getHand() { return hand; }
-    public void clear() { hand.clear(); }
+    public abstract void clear();
 }
