@@ -165,7 +165,7 @@ public class GameScene extends Scene implements ActionListener, DocumentListener
 		userCardSpacePanel.setLayout(new GridLayout(1, setting.getPlayerNum()));
 
 		for(int i = 0; i < setting.getPlayerNum(); i++) {
-			UserCardSpace ucs = new UserCardSpace(cardImages, "플레이어" + (i + 1), DEEP_GREEN, game.getUserPlayers()[i].getId());
+			UserCardSpace ucs = new UserCardSpace(cardImages, "플레이어" + (i + 1), Color.GREEN, game.getUserPlayers()[i].getId());
 			userCardSpaces.add(ucs);
 			userCardSpacePanel.add(ucs);
 			ucs.setDisplayCards(game.getUserPlayers()[i].getHand());
